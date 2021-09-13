@@ -1,0 +1,112 @@
+import cv2
+import pandas as pd
+import numpy as np
+from imutils.perspective import four_point_transform
+
+from helper import show_images
+
+def split_image(image):
+    r = len(image) // questions * questions 
+    c = len(image[0]) // answers * answers
+    image = image[:r, :c]
+    rows = np.vsplit(image, questions)
+    boxes = []
+    for row in rows:
+        cols = np.hsplit(row, answers)
+        for box in cols:
+            boxes.append(box)
+
+    return boxes
+
+def ResultOut(i,j):
+    if (i == 0):
+        if (j == 0):
+            print("Question 1: A")
+        elif (j == 1):
+            print("Question 1: B")
+        elif (j == 2):
+            print("Question 1: C")
+        elif (j == 3):
+            print("Question 1: D")
+        elif (j == 4):
+            print("Question 1: E")   
+    elif (i == 1):
+        if (j == 0):
+            print("Question 2: A")
+        elif (j == 1):
+            print("Question 2: B")
+        elif (j == 2):
+            print("Question 2: C")
+        elif (j == 3):
+            print("Question 2: D")
+        elif (j == 4):
+            print("Question 2: E")   
+    elif (i == 2):
+        if (j == 0):
+            print("Question 3: A")
+        elif (j == 1):
+            print("Question 3: B")
+        elif (j == 2):
+            print("Question 3: C")
+        elif (j == 3):
+            print("Question 3: D")
+        elif (j == 4):
+            print("Question 3: E")    
+    elif (i == 3):
+        if (j == 0):
+            print("Question 4: A")
+        elif (j == 1):
+            print("Question 4: B")
+        elif (j == 2):
+            print("Question 4: C")
+        elif (j == 3):
+            print("Question 4: D")
+        elif (j == 4):
+            print("Question 4: E")         
+    elif (i == 4):
+        if (j == 0):
+            print("Question 5: A")
+        elif (j == 1):
+            print("Question 5: B")
+        elif (j == 2):
+            print("Question 5: C")
+        elif (j == 3):
+            print("Question 5: D")
+        elif (j == 4):
+            print("Question 5: E")
+
+
+height = 800
+width = 600
+green = (0 , 255, 0)
+red = (0,0,255)
+white = (255,255,255)
+questions = 5
+answers = 5
+correct_ans = [0,2,3,3,1]
+
+
+img = cv2.imread("C:\\Users\\steven\\Desktop\\CODE\\Challenge2\\Data\\2000102_NguyenTruongBao_3A.png")
+img = cv2.resize(img, (width, height))
+img = img[123:213,107:260]
+gray_img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+blur_img = cv2.GaussianBlur(gray_img, (5,5),0)
+edge_img = cv2.Canny(blur_img,10,70)
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+_, thresh = cv2.threshold(gray, 170, 255, cv2.THRESH_BINARY_INV)
+
+boxes = split_image(thresh)
+
+for i in range(0, questions):
+    user_answer = None
+    
+    for j in range(answers):
+        pixels = cv2.countNonZero(boxes[j + i * 5])
+        if user_answer is None or pixels > user_answer[1]:
+            user_answer = (j, pixels)
+            final = j 
+    ResultOut(i,final)
+
+
+
